@@ -1,18 +1,19 @@
 const isGitHubPages = process.env.GITHUB_PAGES === "true";
 const repoName = "usercare-properties";
 
-/** @type {import('next').NextConfig} */
+/**
+ * Dual-mode config:
+ * - Vercel / local dev: full Next.js (image optimization, clean URLs).
+ * - GitHub Pages (GITHUB_PAGES=true in the Actions workflow): static export
+ *   under the /<repo>/ base path with the custom image loader.
+ */
 const nextConfig = {
-  // Static HTML export so the site can be hosted on GitHub Pages.
-  output: "export",
-  trailingSlash: true,
-  images: {
-    // Custom loader applies the Pages basePath consistently (src/imageLoader.js).
-    loader: "custom",
-    loaderFile: "./src/imageLoader.js",
-  },
-  // Project pages are served under /<repo>/ — only apply when deploying.
-  basePath: isGitHubPages ? `/${repoName}` : "",
+  ...(isGitHubPages
+    ? { output: "export", trailingSlash: true, basePath: `/${repoName}` }
+    : {}),
+  images: isGitHubPages
+    ? { loader: "custom", loaderFile: "./src/imageLoader.js" }
+    : { formats: ["image/avif", "image/webp"] },
 };
 
 export default nextConfig;
