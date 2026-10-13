@@ -6,7 +6,11 @@ const nextConfig = {
   // Static HTML export so the site can be hosted on GitHub Pages.
   output: "export",
   trailingSlash: true,
-  images: { unoptimized: true },
+  images: {
+    // Custom loader applies the Pages basePath consistently (src/imageLoader.js).
+    loader: "custom",
+    loaderFile: "./src/imageLoader.js",
+  },
   // Project pages are served under /<repo>/ — only apply when deploying.
   basePath: isGitHubPages ? `/${repoName}` : "",
 };
